@@ -169,7 +169,7 @@ int main(){
 	}
 	cout << "Game Over!!!" << endl;
 #endif
-	system("pause");
+	//system("pause");
 	return 0;
 }
 

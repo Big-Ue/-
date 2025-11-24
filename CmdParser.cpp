@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm>
 #include <cassert>
 #include "Place.h"
 #include "CmdParser.h"
@@ -251,6 +252,11 @@ int function_shop(vector<string>& tokens) {
 
 	system("cls");
 
+	vector<string> shname;
+	vector<int> shdata;
+	//vector<int> shinID;
+	vector<int> shprice;
+
 	string name;
 	int data;
 	int inID;
@@ -273,12 +279,15 @@ int function_shop(vector<string>& tokens) {
 	cout << "ID | 食物名稱 | 回復HP | 價格" << endl;
 	while (!fin_food.eof()) {
 		fin_food >> inID >> name >> data >> price;
-		cout << inID << " " << name << " " << data << " " << price << endl;
+		cout << inID << " | " << name << " | " << data << " | " << price << endl;
+		shname.push_back(name);
+		shdata.push_back(data);
+		shprice.push_back(price);
 	}
-
+	fin_food.close();
 	
 
-
+	int a = shname.size();
 	ifstream fin_weapon("weapon.txt");
 	if (!fin_weapon) {
 		cout << "讀檔失敗: weapon.txt" << endl;
@@ -288,22 +297,65 @@ int function_shop(vector<string>& tokens) {
 	cout << "ID | 武器名稱 | 攻擊力 | 價格" << endl;
 	while (!fin_weapon.eof()) {
 		fin_weapon >> inID >> name >> data >> price;
-		cout << inID << name << data << price << endl;
+		cout << inID+a << " | " << name << " | " << data << " | " << price << endl;
+		shname.push_back(name);
+		shdata.push_back(data);
+		shprice.push_back(price);
 	}
+	fin_weapon.close();
+	cout << endl;
 
-	int ch_id;
+	string cmd;
+	int chid;
+	vector<int> ch;
+	while (true) {
+		cin >> cmd;
+		if (cmd == "add") {
+			cin >> chid;
+			if (chid <= 0 || chid > shname.size()) {
+				cout << "沒有這個商品" << endl;
+				continue;
+			}
+			ch.push_back(chid-1);
+			cout << shname[chid - 1] << " 已加入購物車" << endl;
+		}
+		else if (cmd == "del") {
+			cin >> chid;
+			if (chid <= 0 || chid > shname.size()) {
+				cout << "找不到商品" << endl;
+				continue;
+			}
+			auto it = find(ch.begin(), ch.end(), (chid-1));
+			if (it != ch.end()) {
+				ch.erase(it);
+				cout << shname[chid - 1] << " 從購物車刪除" << endl;
+			}
+			else {
+				cout << "找不到商品" << endl;
+			}
+		}
+		else if (cmd == "check") {
+			sort(ch.begin(), ch.end());
+			for (vector<int>::iterator it = ch.begin(); it != ch.end(); it++)
+			{
+				cout << shname[*it] << endl;
+			}
+		}
+		else if (cmd == "settle") {
+			break;
+		}
+		else {
+			cout << "沒有這個指令" << endl;
+		}
+	}
+	
 
-	cout << endl << "選擇您要的商品ID" << endl;
-	cin >> ch_id;
-	cout << "您要 0:結帳 1:加入購物車" << endl;
-
-
+	
 	CLifeEntity* usr = CGlobalInfo::user->get_user();
 	cout << usr->getMoney() << endl;
 
 
-	fin_food.close();
-	fin_weapon.close();
+	
 }
 
 
