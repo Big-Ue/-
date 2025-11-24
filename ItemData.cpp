@@ -28,6 +28,15 @@ CItem *CItemData::getRand (){
 	return NULL;
 }
 
+
+CItem* CItemData::getFood(int id) {
+	return food_array[id];
+}
+CItem* CItemData::getWeapon(int id) {
+	return weapon_array[id];
+}
+
+
 void CItemData::LoadFoodData (){
 	ifstream fin("food.txt");	
 	if (!fin){

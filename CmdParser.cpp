@@ -273,8 +273,9 @@ int function_shop(vector<string>& tokens) {
 	cout << "add+商品ID -> 將商品加入購物車(只有加入購物的商品才能帶走歐~)" << endl;
 	cout << "del+商品ID -> 將商品從購物車刪除" << endl;
 	cout << "check     -> 查看購物車" << endl;
-	cout << "settle    -> 結帳閃人" << endl << endl;
-
+	cout << "settle    -> 結帳" << endl;
+	cout << "out       -> 烙幹" << endl;
+	cout << endl;
 	cout << "食物店鋪: " << endl;
 	cout << "ID | 食物名稱 | 回復HP | 價格" << endl;
 	while (!fin_food.eof()) {
@@ -285,7 +286,7 @@ int function_shop(vector<string>& tokens) {
 		shprice.push_back(price);
 	}
 	fin_food.close();
-	
+	const int food_size = shname.size();
 
 	int a = shname.size();
 	ifstream fin_weapon("weapon.txt");
@@ -304,7 +305,7 @@ int function_shop(vector<string>& tokens) {
 	}
 	fin_weapon.close();
 	cout << endl;
-
+	CLifeEntity* usr = CGlobalInfo::user->get_user();
 	string cmd;
 	int chid;
 	vector<int> ch;
@@ -336,26 +337,75 @@ int function_shop(vector<string>& tokens) {
 		}
 		else if (cmd == "check") {
 			sort(ch.begin(), ch.end());
+			if (ch.size() == 0) {
+				cout << "購物車空空如也" << endl;
+				continue;
+			}
 			for (vector<int>::iterator it = ch.begin(); it != ch.end(); it++)
 			{
 				cout << shname[*it] << endl;
 			}
+			
 		}
 		else if (cmd == "settle") {
+			int tatol = 0;
+			
+			cout << "購入商品: " << endl;
+			sort(ch.begin(), ch.end());
+			for (vector<int>::iterator it = ch.begin(); it != ch.end(); it++)
+			{
+				cout << shname[*it] << " " << shprice[*it] << " 元" << endl;
+				tatol += shprice[*it];
+			}
+			cout << "總價: " << tatol << " 元" << endl;
+			cout << "你的錢包: " << usr->getMoney() << " 元" << endl;
+
+			if (tatol <= usr->getMoney()) {
+				usr->setMoney(usr->getMoney() - tatol);
+				cout << "結帳完成: 剩餘 "<< usr->getMoney() << " 元" << endl;
+
+				CItemData* id = CGlobalInfo::itm_data;
+				for (vector<int>::iterator it = ch.begin(); it != ch.end(); it++)
+				{
+					if (*it >= food_size) {
+						((CFighter*)usr)->captureItem(id->getWeapon(*it-food_size));
+					}
+					else {
+						((CFighter*)usr)->captureItem(id->getFood(*it));
+					}		
+				}
+				ch.clear();
+				//cout << "離開商店" << endl;
+				//break;
+			}
+			else {
+				cout << "結帳失敗: 餘額不足" << endl;
+			}	
+		}
+		else if (cmd == "out") {
+			if (ch.size() != 0) {
+				cout << "您的購物車還有未結帳的商品!!" << endl;
+				cout << "如確認離開則清空購物車，輸入 ok 直接離開，或者其他字元放棄離開" << endl;
+				cin >> cmd;
+				if (cmd != "ok") {
+					continue;
+				}
+			}
+			//cout << "離開商店" << endl;
+
+			//CLifeEntity* usr = CGlobalInfo::user->get_user();
+			
+			
+
+			system("cls");
+			int cur_city = CGlobalInfo::user->get_current_city();
+			CGlobalInfo::map_data->show_description(cur_city);
 			break;
 		}
 		else {
 			cout << "沒有這個指令" << endl;
 		}
 	}
-	
-
-	
-	CLifeEntity* usr = CGlobalInfo::user->get_user();
-	cout << usr->getMoney() << endl;
-
-
-	
 }
 
 

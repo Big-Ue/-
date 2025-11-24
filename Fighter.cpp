@@ -62,7 +62,7 @@ void CFighter::captureItem (CItem *in_item){
 		bag->item_insert (in_item);
 	else
 		entry->addNum (1);	
-	cout << this->getname () << " 從地上撿起 " << in_item->getName () << endl;
+	cout << this->getname () << " 獲得 " << in_item->getName () << endl;
 }
 
 int CFighter::showAllBagItems (){	

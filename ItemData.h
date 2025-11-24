@@ -19,6 +19,8 @@ public:
 	CItem *getRand ();
 	vector <CFood *> food_array;	
 	vector <CWeapon *> weapon_array;	
+	CItem* getFood(int);
+	CItem* getWeapon(int);
 private:
 	void LoadFoodData ();
 	void LoadWeaponData ();
