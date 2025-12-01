@@ -5,15 +5,15 @@
 #include "def.h"
 
 using namespace std;
-CMonster::CMonster (int initHP, int initSP, int initMoney, int initrough, string init_name, string init_eng_name) : CLifeEntity (initHP,initSP,initMoney,init_name), RoughDegree(initrough), eng_name(init_eng_name) {
+CMonster::CMonster (int initHP, int initSP, int initMoney, int initExp, int initrough, string init_name, string init_eng_name) : CLifeEntity (initHP,initSP,initMoney,initExp,init_name), RoughDegree(initrough), eng_name(init_eng_name) {
 	counter_for_monster_id++;
-	cout << "one monster called " << init_name << " (" << init_eng_name << ") is created with <HP, SP, rough> = <" << initHP << ", " << initSP << ", " << initrough << ">" << endl;
+	cout << "one monster called " << init_name << " (" << init_eng_name << ") is created with <HP, SP, rough> = <" << initHP << ", " << initSP << ", " << initrough << "> Äa½à: " << initMoney << endl;
 }
 
-CMonster::CMonster (const CMonsterType *type) : CLifeEntity (1 + rand () % type->max_hp, 1 + rand () % type->max_sp, 0, type->name), RoughDegree(type->max_rough) {
+CMonster::CMonster (const CMonsterType *type) : CLifeEntity (1 + rand () % type->max_hp, 1 + rand () % type->max_sp, type->money, type->exp, type->name), RoughDegree(type->max_rough) {
 	counter_for_monster_id++;
 	eng_name = type->prefix_eng_name + to_string ((long double)counter_for_monster_id);	
-	cout << "Monster called " << type->name << " (" << eng_name << ") is created with <HP, SP, rough> = <" << this->getHP () << ", " << this->getSP () << ", " << this->getRough () << ">" << endl;
+	cout << "Monster called " << type->name << " (" << eng_name << ") is created with <HP, SP, rough> = <" << this->getHP () << ", " << this->getSP () << ", " << this->getRough () << "> Äa½à: " << this->getMoney() << endl;
 }
 
 
@@ -49,6 +49,6 @@ int CMonster::isA (){
 }
 
 string CMonster::get_basic_data (){
-	string output = this->getname () + string ("(") + this->eng_name + string (") <HP, SP, rough> = <") + to_string((long double)this->getHP ()) + string (", ")  + to_string((long double)this->getSP ()) + string (", ") + to_string((long double)this->getRough ()) + string(">");
+	string output = this->getname () + string ("(") + this->eng_name + string (") <HP, SP, rough> = <") + to_string((long double)this->getHP ()) + string (", ")  + to_string((long double)this->getSP ()) + string (", ") + to_string((long double)this->getRough ()) + string("> Äa½à: ") + to_string((long double)this->getMoney());
 	return output;	
 }

@@ -11,7 +11,7 @@ class CMonsterType {
 	friend class CMonsterData;
 	friend class CMonster;
 public:	
-	CMonsterType (int, string, string, int, int, int);	
+	CMonsterType (int, string, string, int, int, int, int, int);	
 private:
 	int id;
 	string name;
@@ -19,6 +19,8 @@ private:
 	int max_hp;
 	int max_sp;
 	int max_rough;
+	int money;
+	int exp;
 };
 
 class CMonsterData {

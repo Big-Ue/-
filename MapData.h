@@ -17,8 +17,9 @@ public:
 	int next_city (int cur_city, int next_dir);
 	void generate_monsters ();
 	CPlace *get_place_by_id (int id);
+	map<int, CPlace*> mapdata;
 private:
-	map<int, CPlace *> mapdata;
+	
 	int num_cities;
 };
 

@@ -6,7 +6,7 @@ class CMonsterType;
 
 class CMonster : public CLifeEntity {
 public:
-	CMonster (int initHP = 0, int initSP = 0, int initMoney = 0, int initrough = 0, string init_name = string ("й╟кл"), string init_eng_name = string ("monster"));
+	CMonster (int initHP = 0, int initSP = 0, int initMoney = 0, int initExp = 0, int initrough = 0, string init_name = string ("й╟кл"), string init_eng_name = string ("monster"));
 	CMonster (const CMonsterType *type);
 	int getRough ();
 	int physicaldamage ();	

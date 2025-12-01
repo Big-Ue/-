@@ -4,6 +4,10 @@
 
 #include <iostream>
 #include "bsd-list.h"
+#include <vector>
+
+using namespace std;
+
 class CItem;
 
 class CBagEntry {
@@ -30,7 +34,8 @@ public:
 	CBagEntry* item_lookup (int type, int id);
 	CBagEntry* item_lookup (int no);
 	void item_delete (CBagEntry*);
-	int showAllItems ();	
+	int showAllItems ();
+	void getAllItems(vector<int> &, vector<int>&);
 private:
 	bag_itemlist listhead;
 };

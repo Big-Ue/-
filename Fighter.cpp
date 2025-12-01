@@ -8,13 +8,20 @@
 
 using namespace std;
 
-CFighter::CFighter (int initHP, int initSP, int initLucky, int in_city) {
+CFighter::CFighter (int initHP, int initSP, int initLucky, int in_city, int initMoney, int initExp, string initName) {
 	if (initHP == 0 && initSP == 0 && initLucky == 0){
 		initHP = 1 + rand() % (FIGHTER_MAXHP);
 		initSP = 1 + rand() % (FIGHTER_MAXSP);
 		initLucky = 1 + rand() % (FIGHTER_MAXLUCKY);
-		setname ("«iªÌµL¼Ä");
 	}
+
+	if (initMoney == 0) {
+		initMoney = 300;
+	}
+
+	setMoney(initMoney);
+	setExp(initExp);
+	setname(initName);
 
 	setInitSPHP (initHP,initSP);
 	Lucky = initLucky;
@@ -68,6 +75,10 @@ void CFighter::captureItem (CItem *in_item){
 int CFighter::showAllBagItems (){	
 	return bag->showAllItems ();	
 }
+void CFighter::getAllBagItems(vector<int>& item_isA, vector<int>& item_ID) {
+	bag->getAllItems(item_isA, item_ID);
+}
+
 
 bool CFighter::useBagItems (int no){
 	CBagEntry* ne = bag->item_lookup (no);

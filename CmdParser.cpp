@@ -106,13 +106,17 @@ int function_kill (vector<string> &tokens){
 
 	CLifeEntity *usr = CGlobalInfo::user->get_user ();
 	assert (usr);
-	if (usr->kill (monster)){		
-		cityptr->remove_moster_by_engname (monster_engname);		
+	if (usr->kill (monster)){			
 		cout << "怪物已死，從怪物身上掉下寶物" << endl;		
 		CItemData *id = CGlobalInfo::itm_data;		
 		if (usr->isA() == efighter){
-			((CFighter *) usr)->captureItem (id->getRand ());				
+			((CFighter *) usr)->captureItem (id->getRand ());	
+			cout << "賺取 " << monster->getMoney() << " 金幣" << endl;
+			usr->setMoney(usr->getMoney()+ monster->getMoney());
+			cout << "習得 " << monster->getExp() << " 點經驗值" << endl;
+			usr->setExp(usr->getExp() + monster->getExp());
 		}
+		cityptr->remove_moster_by_engname(monster_engname);
 	} else {
 		cout << "你現在屬於死亡狀態" << endl;
 	}
@@ -218,6 +222,10 @@ int function_check_body(vector<string>& tokens) {
 
 	cout << usr->getname() << " 的狀態" << endl;
 
+	cout << "錢包餘額: " << usr->getMoney() << " 元" << endl;
+
+	cout << "可用經驗: " << usr->getExp() << " 點" << endl;
+
 	cout << "血量: " << usr->getHP() << "/" << usr->getMAXHP() << " HP" << endl;
 	usr->bloodbarshow("", usr->getMAXHP(), usr->getHP());
 	//cout << endl;
@@ -249,6 +257,14 @@ int function_shop(vector<string>& tokens) {
 		cerr << " command error" << endl;
 		return 0;
 	}
+
+	int cur_city = CGlobalInfo::user->get_current_city();
+	CPlace* cityptr = CGlobalInfo::map_data->get_place_by_id(cur_city);
+	if (cityptr->getname() != "市集") {
+		cout << "需在市集才能使用該功能" << endl;
+		return 0;
+	}
+
 
 	system("cls");
 
@@ -409,6 +425,22 @@ int function_shop(vector<string>& tokens) {
 }
 
 
+//int function_show_money(vector<string>& tokens) {
+//	if (tokens.size() != 1) {
+//		for (vector<string>::iterator it = tokens.begin(); it != tokens.end(); it++) {
+//			cerr << (*it) << " ";
+//		}
+//		cerr << " command error" << endl;
+//		return 0;
+//	}
+//
+//	CLifeEntity* usr = CGlobalInfo::user->get_user();
+//	cout << "錢包餘額: " << usr->getMoney() << " 元" << endl;
+//
+//
+//	return 0;
+//}
+
 int function_help(vector<string>& tokens) {
 	if (tokens.size() != 1) {
 		for (vector<string>::iterator it = tokens.begin(); it != tokens.end(); it++) {
@@ -429,6 +461,7 @@ int function_help(vector<string>& tokens) {
 	cout << "kill" << "      -> kill+(怪物名稱) 攻擊怪物" << endl;
 	cout << "shop" << "      -> 商店(只在市集有效)" << endl;
 	cout << "checkbag" << "  -> 查看背包" << endl;
+	//cout << "showmoney" << " -> 查看錢包" << endl;
 	cout << "checkbody" << " -> 查看狀態" << endl;
 	cout << "clr " << "      -> 清空視窗" << endl;
 	cout << "map " << "      -> 顯示地圖" << endl;
@@ -458,6 +491,7 @@ CCmdParser::CCmdParser (){
 	mappingfunc [string("shop")] = function_shop;
 	mappingfunc [string("checkbag")] = function_check_bag;
 	mappingfunc [string("checkbody")] = function_check_body;
+	//mappingfunc [string("showmoney")] = function_show_money;
 	mappingfunc [string("clr")] = function_clr;
 	mappingfunc [string("map")] = function_map;
 	mappingfunc [string("help")] = function_help;
@@ -489,7 +523,7 @@ int CCmdParser::query (){
 	return (reinterpret_cast<int(*)(const vector<string> &)>(it->second)(tokens));		
 }
 
-//
+
 void CCmdParser::splitstring(const string& s, vector<string>& v, const string& c)
 {
 	string::size_type pos1, pos2;

@@ -16,6 +16,9 @@
 #include "User.h"
 #include "MonsterData.h"
 #include <limits>
+
+#include "UserSystem.h"
+
 using namespace std;
 
 #define MAXBARLEN 40
@@ -139,37 +142,60 @@ int CMonster::counter_for_monster_id = 0;
 void Initialize (){ 
 	srand((unsigned int)time(NULL));                // 設定亂數種子
 	CGlobalInfo::itm_data->Initialize ();			// 初始化物品資料
-	CGlobalInfo::map_data->generate_monsters ();	// 生成地圖怪物
 }
 
-int main(){		
-	Initialize ();	
-	CFighter *fighter = new CFighter();
-	CGlobalInfo::user->set_user ((CLifeEntity *) fighter);		
+//int main(){		
+//	Initialize ();	
+//	CFighter *fighter = new CFighter();
+//	CGlobalInfo::user->set_user ((CLifeEntity *) fighter);		
+//	int cur_city = CGlobalInfo::user->get_current_city ();
+//	cout << endl;
+//	CGlobalInfo::map_data->show_description (cur_city);		
+//
+//	while (CGlobalInfo::parser->query () >= 0){
+//		//CGlobalInfo::map_data->show_description (cur_city);
+//		//cin >> cur_city;
+//	}
+//
+//#if 0
+//	CFighter fighter;	
+//	while (!fighter.isdead ()){
+//		CMonster *m = MonsterSelection (&fighter);
+//		if (m){
+//			fightstatus (m, &fighter);
+//			cout << endl << endl << "戰鬥開始" << endl  << endl;
+//			startfight (m, &fighter);
+//			delete m;
+//		} else
+//			cout << "No monster generated" << endl;
+//	}
+//	cout << "Game Over!!!" << endl;
+//#endif
+//	//system("pause");
+//	return 0;
+//}
+
+
+UserSystem main_user;
+int main() {
+	Initialize();
+	//system("cls");
+	main_user.account_log_in();
+	CGlobalInfo::map_data->generate_monsters();	// 生成地圖怪物
+	//CFighter *fighter = new CFighter();
+	//CGlobalInfo::user->set_user ((CLifeEntity *) fighter);
 	int cur_city = CGlobalInfo::user->get_current_city ();
 	cout << endl;
 	CGlobalInfo::map_data->show_description (cur_city);		
-
+	
 	while (CGlobalInfo::parser->query () >= 0){
 		//CGlobalInfo::map_data->show_description (cur_city);
 		//cin >> cur_city;
 	}
+	
 
-#if 0
-	CFighter fighter;	
-	while (!fighter.isdead ()){
-		CMonster *m = MonsterSelection (&fighter);
-		if (m){
-			fightstatus (m, &fighter);
-			cout << endl << endl << "戰鬥開始" << endl  << endl;
-			startfight (m, &fighter);
-			delete m;
-		} else
-			cout << "No monster generated" << endl;
-	}
-	cout << "Game Over!!!" << endl;
-#endif
+	main_user.save();
+
 	//system("pause");
 	return 0;
 }
-

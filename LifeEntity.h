@@ -14,21 +14,25 @@ using namespace std;
 
 class CLifeEntity {
 public:
-	CLifeEntity (int initHP = 0, int initSP = 0, int initMoney = 300, string initname = "");
+	CLifeEntity (int initHP = 0, int initSP = 0, int initMoney = 0, int initExp = 0, string initname = "");
 	void setInitSPHP (int initHP = 0, int initSP = 0);
 	bool isdead ();
 
 	void setMoney(int);
 	int getMoney();
+	void setExp(int);
+	int getExp();
 
 	void setHP (int);
 	void addHP (int);
 	int getHP ();
 	int getMAXHP ();
+
 	int getSP ();
+	void addSP(int);
 	int getMAXSP ();
-	void addSP (int);
 	void delSP (int);
+
 	int gethurt (int hurt);
 	string getname ();
 	void setname (string);
@@ -45,6 +49,7 @@ private:
 	int maxSP, maxHP;
 	int SP, HP;
 	int money;
+	int exp;
 	string Name;
 	CWeapon *weapon;
 

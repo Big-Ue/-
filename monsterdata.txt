@@ -1,28 +1,28 @@
-1 ¤p¨ß¤l rabbit 10 10 0
-2 ¤p¯QÀt turtle 30 10 1
-3 ¤p¿ß cat 25 15 2
-4 ¤pª¯ dog 30 20 3
-5 ¤j«¬¤ü bigdog 50 30 4
-6 ¤p¦Ñªê tiger 60 40 6
-7 ¤j¦Ñªê bigtiger 100 100 10
-8 ¤j¶H elephant 300 200 50
-9 Às dragon 10000 5000 300
-10 ¶À¸Á hornet 20 15 5
-11 ³¥½Þ boar 80 35 20
-12 ª°¯W fox 40 25 12
-13 ¯T wolf 90 40 25
-14 ¶Âºµ bear 200 70 60
-15 ¬ü¬w°\ jaguar 160 90 55
-16 ¨³²r³¾ raptor 120 75 40
-17 ¥¨¹« giant_rat 50 22 8
-18 ¥¨ÆN eagle 180 70 45
-19 ¥¨Á¯ python 150 60 35
-20 ¤õ»h»i firesalamander 140 80 50
-21 ¹p¤û thunderbull 250 120 90
-22 ©¥©Ç rockgolem 400 110 150
-23 °­»î ghost 120 50 30
-24 ¤Û¼v¿ß phantomcat 80 60 25
-25 ¼v¤ü shadowdog 140 95 60
-26 ¥¨«¬ªá©Ç plantbeast 260 85 80
-27 º²©¥¤û lavabull 350 150 180
-28 ­·Às¥®Åé winddragon 900 400 200
+1  ¤p¨ß¤l       rabbit         10    10    0    5     5
+2  ¤p¯QÀt       turtle         30    10    1    8    16
+3  ¤p¿ß         cat            25    15    2   10    21
+4  ¤pª¯         dog            30    20    3   12    29
+5  ¤j«¬¤ü       bigdog         50    30    4   18    42
+6  ¤p¦Ñªê       tiger          60    40    6   25    58
+7  ¤j¦Ñªê       bigtiger      100   100   10   50   105
+8  ¤j¶H         elephant      300   200   50  180   420
+9  Às           dragon       10000  5000  300 9000  8500
+10 ¶À¸Á         hornet         20    15    5   12    36
+11 ³¥½Þ         boar           80    35   20   40   139
+12 ª°¯W         fox            40    25   12   20    80
+13 ¯T           wolf           90    40   25   45   169
+14 ¶Âºµ         bear          200    70   60  120   407
+15 ¬ü¬w°\       jaguar        160    90   55  110   371
+16 ¨³²r³¾       raptor        120    75   40   85   274
+17 ¥¨¹«         giant_rat      50    22    8   18    61
+18 ¥¨ÆN         eagle         180    70   45  100   318
+19 ¥¨Á¯         python        150    60   35   80   251
+20 ¤õ»h»i       firesalamander140    80   50   95   333
+21 ¹p¤û         thunderbull   250   120   90  180   602
+22 ©¥©Ç         rockgolem     400   110  150  300   991
+23 °­»î         ghost         120    50   30   60   209
+24 ¤Û¼v¿ß       phantomcat     80    60   25   45   169
+25 ¼v¤ü         shadowdog     140    95   60  110   392
+26 ¥¨«¬ªá©Ç     plantbeast    260    85   80  170   545
+27 º²©¥¤û       lavabull      350   150  180  350  1160
+28 ­·Às¥®Åé     winddragon    900   400  200  750  1595

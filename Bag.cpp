@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Bag.h"
 #include "Item.h"
-
+#include <vector>
 using namespace std;
 
 CBagEntry::CBagEntry(CItem *in_item, int in_num){
@@ -66,3 +66,13 @@ int CBag::showAllItems (){
 	return countnum;
 }
 
+
+void CBag::getAllItems(vector<int>&item_isA, vector<int>& item_ID) {
+	CBagEntry* ne = listhead.lh_first;
+	CItem* tmp;
+	for (; ne; ne = ne->next_link.le_next) {
+		tmp = ne->itm;
+		item_isA.push_back(tmp->isA());
+		item_ID.push_back(tmp->getID());
+	}
+}

@@ -89,6 +89,7 @@
     <ClCompile Include="Place.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="User.cpp" />
+    <ClCompile Include="UserSystem.cpp" />
     <ClCompile Include="weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -107,6 +108,7 @@
     <ClInclude Include="MonsterData.h" />
     <ClInclude Include="Place.h" />
     <ClInclude Include="User.h" />
+    <ClInclude Include="UserSystem.h" />
     <ClInclude Include="weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

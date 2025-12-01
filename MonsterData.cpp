@@ -2,13 +2,15 @@
 #include <fstream>
 #include "MonsterData.h"
 
-CMonsterType::CMonsterType (int in_id, string in_name, string in_eng, int in_hp, int in_sp, int in_rough){
+CMonsterType::CMonsterType (int in_id, string in_name, string in_eng, int in_hp, int in_sp, int in_rough, int in_money, int in_exp){
 	id = in_id;
 	name = in_name;
 	prefix_eng_name = in_eng;
 	max_hp = in_hp;
 	max_sp = in_sp;
 	max_rough = in_rough;
+	money = in_money;
+	exp = in_exp;
 }
 
 CMonsterData::CMonsterData (){
@@ -20,10 +22,10 @@ CMonsterData::CMonsterData (){
 	int tmp_id;
 	string tmp_name;
 	string tmp_eng;
-	int tmp_hp, tmp_sp, tmp_rough;
+	int tmp_hp, tmp_sp, tmp_rough, tmp_money, tmp_exp;
 	CMonsterType *tmp_type;
-	while (fin >> tmp_id >> tmp_name >> tmp_eng >> tmp_hp >> tmp_sp >> tmp_rough){
-		tmp_type = new CMonsterType (tmp_id, tmp_name, tmp_eng, tmp_hp, tmp_sp, tmp_rough);
+	while (fin >> tmp_id >> tmp_name >> tmp_eng >> tmp_hp >> tmp_sp >> tmp_rough >> tmp_money >> tmp_exp){
+		tmp_type = new CMonsterType (tmp_id, tmp_name, tmp_eng, tmp_hp, tmp_sp, tmp_rough, tmp_money, tmp_exp);
 		monsterdata.push_back (tmp_type);
 	}
 #if 0

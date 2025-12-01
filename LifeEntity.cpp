@@ -4,10 +4,11 @@
 #include "LifeEntity.h"
 
 
-CLifeEntity::CLifeEntity (int initHP, int initSP, int initMoney, string initname){
+CLifeEntity::CLifeEntity (int initHP, int initSP, int initMoney, int initExp, string initname){
 	maxSP = SP = initSP;
 	maxHP = HP = initHP;
 	money = initMoney;
+	exp   = initExp;
 	Name = initname;
 	weapon = NULL;
 
@@ -26,6 +27,12 @@ void CLifeEntity::setMoney(int inMoney) {
 }
 int CLifeEntity::getMoney() {
 	return money;
+}
+void CLifeEntity::setExp(int inExp) {
+	exp = inExp;
+}
+int CLifeEntity::getExp() {
+	return exp;
 }
 
 
