@@ -1,4 +1,3 @@
-
 #ifndef BAG_H
 #define BAG_H
 
@@ -18,8 +17,10 @@ public:
 	void addNum (int adds = 1){number += adds;};
 	void deleteNum (int dels = 1){number -= dels;};
 	int getNum (){return number;};
+	CItem* getItem() { return itm; }
+	LIST_ENTRY(CBagEntry) next_link; // public for macro access
+	CBagEntry* getNext() const { return next_link.le_next; }
 private:
-	LIST_ENTRY(CBagEntry) next_link;
 	CItem *itm;
 	int number;
 };
@@ -36,6 +37,9 @@ public:
 	void item_delete (CBagEntry*);
 	int showAllItems ();
 	void getAllItems(vector<int> &, vector<int>&);
+	// pop a single unit by global 1-based index (units enumerated across entries)
+	// returns the CItem* for the popped unit, or NULL if not found
+	CItem* popOneItemByGlobalIndex(int no);
 private:
 	bag_itemlist listhead;
 };

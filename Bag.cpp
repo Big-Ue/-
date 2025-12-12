@@ -17,7 +17,7 @@ CBag::~CBag (){
 	CBagEntry* ne = listhead.lh_first;
 	CBagEntry* tmp = NULL;
 	while (ne){
-		tmp = ne->next_link.le_next;
+		tmp = ne->getNext();
 		LIST_REMOVE (ne, next_link);
 		ne = tmp;
 	}
@@ -30,7 +30,7 @@ void CBag::item_insert (CItem *in_item){
 
 CBagEntry* CBag::item_lookup (int type, int id){
 	CBagEntry* ne = listhead.lh_first;
-	for (; ne; ne = ne->next_link.le_next){
+	for (; ne; ne = ne->getNext()){
 		if (ne->itm->isA() == type && ne->itm->getID () == id)
 			break;
 	}
@@ -40,7 +40,7 @@ CBagEntry* CBag::item_lookup (int type, int id){
 CBagEntry* CBag::item_lookup (int no){
 	CBagEntry* ne = listhead.lh_first;
 	int countnum = 1;
-	for (; ne; ne = ne->next_link.le_next){
+	for (; ne; ne = ne->getNext()){
 		if (no == countnum){						
 			break;
 		}
@@ -59,7 +59,7 @@ int CBag::showAllItems (){
 	int countnum = 0;
 	if (ne)
 		cout << "背包內容如下所示：" << endl;
-	for (; ne; ne = ne->next_link.le_next){
+	for (; ne; ne = ne->getNext()){
 		tmp = ne->itm;
 		cout << ++countnum << ". " << tmp->getName () << ", 數量-> " << ne->number << endl;
 	}	
@@ -70,9 +70,30 @@ int CBag::showAllItems (){
 void CBag::getAllItems(vector<int>&item_isA, vector<int>& item_ID) {
 	CBagEntry* ne = listhead.lh_first;
 	CItem* tmp;
-	for (; ne; ne = ne->next_link.le_next) {
+	for (; ne; ne = ne->getNext()) {
 		tmp = ne->itm;
-		item_isA.push_back(tmp->isA());
-		item_ID.push_back(tmp->getID());
+		for (int k = 0; k < ne->number; ++k) {
+			item_isA.push_back(tmp->isA());
+			item_ID.push_back(tmp->getID());
+		}
 	}
+}
+
+CItem* CBag::popOneItemByGlobalIndex(int no) {
+	CBagEntry* ne = listhead.lh_first;
+	int count = 1;
+	for (; ne; ne = ne->getNext()) {
+		if (count + ne->number - 1 >= no) {
+			// this entry contains the requested unit
+			CItem* itm = ne->itm;
+			ne->deleteNum(1);
+			if (ne->getNum() <= 0) {
+				LIST_REMOVE(ne, next_link);
+				delete ne;
+			}
+			return itm;
+		}
+		count += ne->number;
+	}
+	return NULL;
 }

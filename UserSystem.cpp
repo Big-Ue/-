@@ -12,6 +12,8 @@
 #include "Item.h"
 #include "def.h"
 #include "Bag.h"
+#include "Mage.h"
+#include "Orc.h"
 
 using namespace std;
 
@@ -21,17 +23,27 @@ void UserSystem::account_log_in(void) {
 		cin >> Username;
 
 		if (Username == "create") {
-			cout << "請創建帳戶名稱: ";
+			cout << "請輸入要註冊的帳號名稱: ";
 			cin >> Username;
 
-			cout << "請創建密碼: ";
+			cout << "請設定密碼: ";
 			cin >> Password;
+
+			// choose profession
+			cout << "選擇職業: <1 冒險者> <2 法師> <3 獸人>，請輸入數字: ";
+			int choice = 1;
+			cin >> choice;
+			int prof = efighter;
+			if (choice == 2) prof = emage;
+			else if (choice == 3) prof = eorc;
 
 			string Index = "user/" + Username + ".txt";
 			ofstream fout(Index);
 			fout << Password << endl;
+			// write header token and profession type so loader knows which class to create
+			fout << "User " << prof << endl;
 
-			cout << "創建成功!" << endl;
+			cout << "註冊完成!" << endl;
 			fout.close();
 			continue;
 		}
@@ -39,9 +51,8 @@ void UserSystem::account_log_in(void) {
 		if (search_account(Username) == 0) {
 			break;
 		}
-		cout << "查無此帳號! 輸入<create>可創建帳戶" << endl;
+		cout << "找不到此帳號! 若要註冊請輸入 <create>" << endl;
 	}
-
 
 	
 	log_password();
@@ -54,27 +65,67 @@ void UserSystem::account_log_in(void) {
 	fin >> Password;
 
 	if (!(fin >> cmd)) {
-		CFighter* fighter = new CFighter();
+		// no further data -> default to fighter; set character name to account username
+		CFighter* fighter = new CFighter(0,0,0,1,300,0, Username);
 		CGlobalInfo::user->set_user ((CLifeEntity *) fighter);
 		return;
 	}
 
+	// expected token is "User"
+	if (cmd != "User") {
+		// unknown format -> default
+		CFighter* fighter = new CFighter(0,0,0,1,300,0, Username);
+		CGlobalInfo::user->set_user ((CLifeEntity *) fighter);
+		return;
+	}
 
+	int tpye = 0;
+	if (!(fin >> tpye)) {
+		// only header present, create default fighter
+		CFighter* fighter = new CFighter(0,0,0,1,300,0, Username);
+		CGlobalInfo::user->set_user ((CLifeEntity *) fighter);
+		fin.close();
+		return;
+	}
 
+	// skip whitespace and check if there's more character data
+	fin >> ws;
+	if (fin.eof()) {
+		// no saved detailed data -> create default instance based on tpye
+		if (tpye == efighter) {
+			CFighter* fighter = new CFighter(0,0,0,1,300,0, Username);
+			CGlobalInfo::user->set_user ((CLifeEntity *) fighter);
+		} else if (tpye == emage) {
+			CMage* mage = new CMage(0,0,0,1,200,0, Username);
+			CGlobalInfo::user->set_user ((CLifeEntity *) mage);
+		} else if (tpye == eorc) {
+			COrc* orc = new COrc(0,0,0,1,100,0, Username);
+			CGlobalInfo::user->set_user ((CLifeEntity *) orc);
+		} else {
+			CFighter* fighter = new CFighter(0,0,0,1,300,0, Username);
+			CGlobalInfo::user->set_user ((CLifeEntity *) fighter);
+		}
+		fin.close();
+		return;
+	}
 
-	int tpye;
-
-	fin >> tpye;
+	// there is detailed saved data; treat as existing save (currently supported for fighter)
 	if (tpye == efighter) {
 		string in_name;
-		int in_HP, in_MAXHP, in_SP, in_MAXSP, in_Exp, in_Money, in_Lucky, in_City;
-				
-		fin >> in_name >> in_HP >> in_MAXHP >> in_SP >> in_MAXSP >> in_Exp >> in_Money >> in_Lucky >> in_City;
+		int in_HP, in_MAXHP, in_SP, in_MAXSP, in_Exp, in_Money, in_Lucky, in_Level, in_City;
+		
+		if (!(fin >> in_name >> in_HP >> in_MAXHP >> in_SP >> in_MAXSP >> in_Exp >> in_Money >> in_Lucky >> in_Level >> in_City)) {
+			// failed to read full data, fallback to default
+			CFighter* fighter = new CFighter(0,0,0,1,300,0, Username);
+			CGlobalInfo::user->set_user ((CLifeEntity *) fighter);
+			fin.close();
+			return;
+		}
 
 		CFighter *fighter = new CFighter(in_HP, in_SP, in_Lucky, in_City, in_Money, in_Exp, in_name);
-		CGlobalInfo::user->set_user ((CLifeEntity *) fighter);	
-		//CLifeEntity* usr = CGlobalInfo::user->get_user();
-
+		fighter->setLevel(in_Level);
+		CGlobalInfo::user->set_user ((CLifeEntity *) fighter);
+		// load bag items if any
 		int item_type, item_ID;
 		CItemData* id = CGlobalInfo::itm_data;
 		while (fin >> item_type >> item_ID) {
@@ -84,7 +135,62 @@ void UserSystem::account_log_in(void) {
 			else if (item_type == eweapon) {
 				fighter->captureItem(id->getWeapon(item_ID));
 			}
-		}	
+		}
+	}
+	else if (tpye == emage) {
+		string in_name;
+		int in_HP, in_MAXHP, in_SP, in_MAXSP, in_Exp, in_Money, in_Int, in_Level, in_City;
+		if (!(fin >> in_name >> in_HP >> in_MAXHP >> in_SP >> in_MAXSP >> in_Exp >> in_Money >> in_Int >> in_Level >> in_City)) {
+			CMage* mage = new CMage(0,0,0,1,200,0, Username);
+			CGlobalInfo::user->set_user ((CLifeEntity *) mage);
+			fin.close();
+			return;
+		}
+
+		CMage *mage = new CMage(in_HP, in_SP, in_Int, in_City, in_Money, in_Exp, in_name);
+		mage->setLevel(in_Level);
+		CGlobalInfo::user->set_user ((CLifeEntity *) mage);
+		// load bag items
+		int item_type, item_ID;
+		CItemData* id = CGlobalInfo::itm_data;
+		while (fin >> item_type >> item_ID) {
+			if (item_type == efood) {
+				mage->captureItem(id->getFood(item_ID));
+			}
+			else if (item_type == eweapon) {
+				mage->captureItem(id->getWeapon(item_ID));
+			}
+		}
+	}
+	else if (tpye == eorc) {
+		string in_name;
+		int in_HP, in_MAXHP, in_SP, in_MAXSP, in_Exp, in_Money, in_Str, in_Level, in_City;
+		if (!(fin >> in_name >> in_HP >> in_MAXHP >> in_SP >> in_MAXSP >> in_Exp >> in_Money >> in_Str >> in_Level >> in_City)) {
+			COrc* orc = new COrc(0,0,0,1,100,0, Username);
+			CGlobalInfo::user->set_user ((CLifeEntity *) orc);
+			fin.close();
+			return;
+		}
+
+		COrc *orc = new COrc(in_HP, in_SP, in_Str, in_City, in_Money, in_Exp, in_name);
+		orc->setLevel(in_Level);
+		CGlobalInfo::user->set_user ((CLifeEntity *) orc);
+		// load bag items
+		int item_type, item_ID;
+		CItemData* id = CGlobalInfo::itm_data;
+		while (fin >> item_type >> item_ID) {
+			if (item_type == efood) {
+				orc->captureItem(id->getFood(item_ID));
+			}
+			else if (item_type == eweapon) {
+				orc->captureItem(id->getWeapon(item_ID));
+			}
+		}
+	}
+	else {
+		// unknown type -> fallback default fighter
+		CFighter* fighter = new CFighter(0,0,0,1,300,0, Username);
+		CGlobalInfo::user->set_user ((CLifeEntity *) fighter);
 	}
 	fin.close();
 }
@@ -99,16 +205,13 @@ void UserSystem::save(void) {
 		splitstring(line, tokens, string(" "));
 	}
 	fin.close();
-	/*for (vector<string>::iterator it = tokens.begin(); it != tokens.end(); it++)
-	{
-		cout << *it << " " << endl;
-	}*/
 
 	ofstream fout(Index);
 	CLifeEntity* usr = CGlobalInfo::user->get_user();
-	CFighter* f = (CFighter*)usr;
+	if (!usr) return;
 
 	fout << Password << endl;
+	// write header and base stats
 	fout << "User";
 	fout << " " << usr->isA();
 	fout << " " << usr->getname();
@@ -119,24 +222,57 @@ void UserSystem::save(void) {
 	fout << " " << usr->getExp();
 	fout << " " << usr->getMoney();
 
-		
-	if (usr->isA() == efighter) {
-		fout << " " << f->getLucky();
-		fout << " " << CGlobalInfo::user->get_current_city();
-		
-		vector<int> item_isA;
-		vector<int> item_ID;
-		int num;
-		
-		f->getAllBagItems(item_isA, item_ID);
-		num = f->showAllBagItems();
+	int type = usr->isA();
+	// save class-specific extra value + current city, then bag items (one pair per unit)
+	if (type == efighter) {
+		CFighter* f = static_cast<CFighter*>(usr);
+		if (f) {
+			fout << " " << f->getLucky();
+			// write level then current city
+			fout << " " << f->getLevel();
+			fout << " " << CGlobalInfo::user->get_current_city();
 
-		while (num--) {
-			fout << " " << item_isA[num];
-			fout << " " << (item_ID[num]-1);
+			vector<int> item_isA;
+			vector<int> item_ID;
+			f->getAllBagItems(item_isA, item_ID);
+			for (size_t i = 0; i < item_isA.size(); ++i) {
+				fout << " " << item_isA[i] << " " << (item_ID[i] - 1);
+			}
 		}
-
 	}
+	else if (type == emage) {
+		CMage* m = static_cast<CMage*>(usr);
+		if (m) {
+			fout << " " << m->getIntellect();
+			// write level then current city
+			fout << " " << m->getLevel();
+			fout << " " << CGlobalInfo::user->get_current_city();
+
+			vector<int> item_isA;
+			vector<int> item_ID;
+			m->getAllBagItems(item_isA, item_ID);
+			for (size_t i = 0; i < item_isA.size(); ++i) {
+				fout << " " << item_isA[i] << " " << (item_ID[i] - 1);
+			}
+		}
+	}
+	else if (type == eorc) {
+		COrc* o = static_cast<COrc*>(usr);
+		if (o) {
+			// write strength, level and current city
+			fout << " " << o->getStrength();
+			fout << " " << o->getLevel();
+			fout << " " << CGlobalInfo::user->get_current_city();
+
+			vector<int> item_isA;
+			vector<int> item_ID;
+			o->getAllBagItems(item_isA, item_ID);
+			for (size_t i = 0; i < item_isA.size(); ++i) {
+				fout << " " << item_isA[i] << " " << (item_ID[i] - 1);
+			}
+		}
+	}
+	fout.close();
 }
 
 

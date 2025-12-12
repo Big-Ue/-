@@ -48,12 +48,11 @@ void CItemData::LoadFoodData (){
 	int inID;
 	int price;
 	CFood *food;
-	while (!fin.eof ()){
-		fin >> inID >> name >> hp_bonus >> price;
-		//cout << inID << name << hp_bonus << price << endl;
+	// Read safely
+	while (fin >> inID >> name >> hp_bonus >> price){
 		food = new CFood (name, 0, 0, inID, hp_bonus);
-		CGlobalInfo::itm_data->food_array.push_back (food);		
-		//cout << name << " " << hp_bonus << endl;
+		CGlobalInfo::itm_data->food_array.push_back (food);
+		CGlobalInfo::itm_data->food_price.push_back(price);
 	}
 	fin.close ();
 }
@@ -69,13 +68,21 @@ void CItemData::LoadWeaponData (){
 	int inID;
 	int price;
 	CWeapon *weapon;
-	while (!fin.eof ()){
-		fin >> inID >> name >> attack_bonus >> price;
-		//cout << inID << name << attack_bonus << price << endl;
+	while (fin >> inID >> name >> attack_bonus >> price){
 		weapon = new CWeapon (name, 0, 0, inID, attack_bonus);
-		CGlobalInfo::itm_data->weapon_array.push_back (weapon);		
-		//cout << name << " " << hp_bonus << endl;
+		CGlobalInfo::itm_data->weapon_array.push_back (weapon);
+		CGlobalInfo::itm_data->weapon_price.push_back(price);
 	}
 	fin.close ();
 	
+}
+
+int CItemData::getFoodPrice(int idx) {
+	if (idx < 0 || idx >= (int)food_price.size()) return 0;
+	return food_price[idx];
+}
+
+int CItemData::getWeaponPrice(int idx) {
+	if (idx < 0 || idx >= (int)weapon_price.size()) return 0;
+	return weapon_price[idx];
 }

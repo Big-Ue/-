@@ -1,4 +1,3 @@
-
 #ifndef ITEMDATA_H
 #define ITEMDATA_H
 
@@ -21,6 +20,11 @@ public:
 	vector <CWeapon *> weapon_array;	
 	CItem* getFood(int);
 	CItem* getWeapon(int);
+	// prices for shop display
+	vector<int> food_price;
+	vector<int> weapon_price;
+	int getFoodPrice(int idx);
+	int getWeaponPrice(int idx);
 private:
 	void LoadFoodData ();
 	void LoadWeaponData ();

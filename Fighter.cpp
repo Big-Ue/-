@@ -5,14 +5,16 @@
 #include "def.h"
 #include "GlobalInfo.h"
 #include "MapData.h"
+#include "ItemData.h"
 
 using namespace std;
 
 CFighter::CFighter (int initHP, int initSP, int initLucky, int in_city, int initMoney, int initExp, string initName) {
 	if (initHP == 0 && initSP == 0 && initLucky == 0){
-		initHP = 1 + rand() % (FIGHTER_MAXHP);
-		initSP = 1 + rand() % (FIGHTER_MAXSP);
-		initLucky = 1 + rand() % (FIGHTER_MAXLUCKY);
+		// use maximum values by default
+		initHP = FIGHTER_MAXHP;
+		initSP = FIGHTER_MAXSP;
+		initLucky = FIGHTER_MAXLUCKY;
 	}
 
 	if (initMoney == 0) {
@@ -27,6 +29,7 @@ CFighter::CFighter (int initHP, int initSP, int initLucky, int in_city, int init
 	Lucky = initLucky;
 	cur_city = in_city;
 	bag = new CBag ();
+	Level = 1;
 	cout << "One Fighter is created with (maxHP, maxSP, maxLucky) = (" << initHP << ", " << initSP << ", " << initLucky << ")" <<endl; 
 }
 
@@ -82,7 +85,7 @@ void CFighter::getAllBagItems(vector<int>& item_isA, vector<int>& item_ID) {
 
 bool CFighter::useBagItems (int no){
 	CBagEntry* ne = bag->item_lookup (no);
-	if (!ne){		
+	if (!ne){
 		return false;
 	} 
 	if (ne->itm->isA () == eweapon){
@@ -125,3 +128,61 @@ int CFighter::goto_next_city (int next_dir){
 int CFighter::get_current_city (){
 	return cur_city;	
 }
+
+int CFighter::sellAllBagItems(CItemData* itemData) {
+	if (!itemData) return 0;
+	vector<int> item_isA;
+	vector<int> item_ID;
+	bag->getAllItems(item_isA, item_ID);
+	int total = 0;
+	for (size_t i = 0; i < item_isA.size(); ++i) {
+		int type = item_isA[i];
+		int id = item_ID[i];
+		if (type == efood) {
+			total += itemData->getFoodPrice(id);
+		} else if (type == eweapon) {
+			total += itemData->getWeaponPrice(id);
+		}
+	}
+	// remove all items from bag
+	// simple approach: delete bag and create a new one
+	if (bag) delete bag;
+	bag = new CBag();
+	return total;
+}
+
+int CFighter::sellBagItem(int unitIndex, CItemData* itemData) {
+	if (!itemData) return 0;
+	CItem* itm = bag->popOneItemByGlobalIndex(unitIndex);
+	cout << "出售了" << (itm ? itm->getName() : "無效物品") << endl;
+	if (!itm) return 0;
+	int gain = 0;
+	if (itm->isA() == efood) {
+		int id = itm->getID();
+		gain = itemData->getFoodPrice(id-1);
+	} else if (itm->isA() == eweapon) {
+		int id = itm->getID();
+		gain = itemData->getWeaponPrice(id-1);
+	}
+	// do not delete item; ItemData owns item objects
+	return gain;
+}
+
+void CFighter::levelUp() {
+	int need = 100 * Level; // EXP needed to level up
+	if (getExp() < need) {
+		cout << "經驗不足，無法升級。需要 " << need << " 點經驗" << endl;
+		return;
+	}
+	setExp(getExp() - need);
+	Level++;
+	int newMaxHP = getMAXHP() + 50; // increase by 50 per level
+	int newMaxSP = getMAXSP() + 50; // increase by 50 per level
+	// setInitSPHP sets both max and current values, so HP/SP will be refilled
+	setInitSPHP(newMaxHP, newMaxSP);
+	cout << "升級成功！等級現在為 LV " << Level << "。最大 HP/ SP 已增加，並已回滿。" << endl;
+}
+
+int CFighter::getLevel() const { return Level; }
+
+void CFighter::setLevel(int lv) { Level = lv; }
